@@ -19,6 +19,8 @@ class AppLocalizations {
   /// use only the lang code to generate i18n file path like en.json or ar.json
   final bool useOnlyLangCode;
 
+  bool initialized = false;
+
   static AppLocalizations of(BuildContext context) {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
@@ -54,6 +56,8 @@ class AppLocalizations {
     _result.forEach((String key, dynamic value) {
       this._sentences[key] = value;
     });
+
+    initialized = true;
 
     return true;
   }
@@ -130,7 +134,7 @@ class EasylocaLizationDelegate extends LocalizationsDelegate<AppLocalizations> {
       value = Locale(_codeLang, _codeCoun);
     AppLocalizations localizations = AppLocalizations(value,
         path: path, loadPath: loadPath, useOnlyLangCode: useOnlyLangCode);
-    await localizations.load();
+    localizations.load();
     return localizations;
   }
 

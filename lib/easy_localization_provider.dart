@@ -20,8 +20,7 @@ class EasyLocalizationProvider extends InheritedWidget {
 
 class EasyLocalization extends StatefulWidget {
   final Widget child;
-  final Locale defaultLocale;
-  EasyLocalization({this.child, this.defaultLocale});
+  EasyLocalization({this.child});
   _EasyLocalizationState createState() => _EasyLocalizationState();
 }
 
@@ -43,17 +42,10 @@ class _EasyLocalizationState extends State<EasyLocalization> {
     await preferences.setString('codeL', value.languageCode);
     var _codeLang = preferences.getString('codeL');
     var _codeCoun = preferences.getString('codeC');
-    if ((_codeLang == null || _codeCoun == null) && widget.defaultLocale != null) {
-      setState(() {
-        _locale = widget.defaultLocale;
-        _savedLocale = widget.defaultLocale;
-      });
-    }else {
-      setState(() {
-        _locale = Locale(_codeLang, _codeCoun);
-        _savedLocale = Locale(_codeLang, _codeCoun);
-      });
-    }
+    setState(() {
+      _locale = Locale(_codeLang, _codeCoun);
+      _savedLocale = Locale(_codeLang, _codeCoun);
+    });
   }
 
   void saveLocale() async {

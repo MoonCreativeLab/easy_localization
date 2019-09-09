@@ -99,7 +99,7 @@ class AppLocalizations {
 }
 
 class EasylocaLizationDelegate extends LocalizationsDelegate<AppLocalizations> {
-  final Locale locale;
+  final Locale defaultLocale;
   final String path;
   final String loadPath;
 
@@ -107,7 +107,7 @@ class EasylocaLizationDelegate extends LocalizationsDelegate<AppLocalizations> {
   final bool useOnlyLangCode;
 
   EasylocaLizationDelegate({
-    @required this.locale,
+    @required this.defaultLocale,
     this.path,
     this.loadPath,
     this.useOnlyLangCode = false,
@@ -123,9 +123,9 @@ class EasylocaLizationDelegate extends LocalizationsDelegate<AppLocalizations> {
     var _codeLang = _preferences.getString('codeL');
     var _codeCoun = _preferences.getString('codeC');
     if (_codeLang == null || _codeCoun == null) {
-      //value = Locale(this.locale.languageCode, this.locale.countryCode);
-      await _preferences.setString('codeC', value.countryCode);
-      await _preferences.setString('codeL', value.languageCode);
+      value = Locale(defaultLocale.languageCode, defaultLocale.countryCode);
+      await _preferences.setString('codeC', defaultLocale.countryCode);
+      await _preferences.setString('codeL', defaultLocale.languageCode);
     } else
       value = Locale(_codeLang, _codeCoun);
     AppLocalizations localizations = AppLocalizations(value,

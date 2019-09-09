@@ -102,6 +102,7 @@ class EasylocaLizationDelegate extends LocalizationsDelegate<AppLocalizations> {
   final Locale defaultLocale;
   final String path;
   final String loadPath;
+  final VoidCallback onInitialized;
 
   ///  * use only the lang code to generate i18n file path like en.json or ar.json
   final bool useOnlyLangCode;
@@ -111,6 +112,7 @@ class EasylocaLizationDelegate extends LocalizationsDelegate<AppLocalizations> {
     this.path,
     this.loadPath,
     this.useOnlyLangCode = false,
+    this.onInitialized,
   });
 
   @override
@@ -130,8 +132,15 @@ class EasylocaLizationDelegate extends LocalizationsDelegate<AppLocalizations> {
       value = Locale(_codeLang, _codeCoun);
     AppLocalizations localizations = AppLocalizations(value,
         path: path, loadPath: loadPath, useOnlyLangCode: useOnlyLangCode);
-    await localizations.load();
+    _loadLocalizations(localizations);
     return localizations;
+  }
+
+  Future _loadLocalizations(AppLocalizations localizations) async {
+    await localizations.load();
+    if (onInitialized != null) {
+      onInitialized();
+    }
   }
 
   @override

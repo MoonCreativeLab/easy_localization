@@ -5,16 +5,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 class AppLocalizations {
-  AppLocalizations(
-    this.locale, {
+  AppLocalizations(this.locale, {
     this.path,
     this.loadPath,
     this.useOnlyLangCode = false,
+    this.isTest = false,
   });
 
   Locale locale;
   final String path;
   final String loadPath;
+  final bool isTest;
 
   /// use only the lang code to generate i18n file path like en.json or ar.json
   final bool useOnlyLangCode;
@@ -25,11 +26,15 @@ class AppLocalizations {
 
   Map<String, dynamic> _sentences;
 
+  Future<Localization> loadTest(Locale locale) async {
+    return Localization(locale);
+  }
+
   Future<bool> load() async {
     String data;
 
     final SharedPreferences _preferences =
-        await SharedPreferences.getInstance();
+    await SharedPreferences.getInstance();
 
     var _codeLang = _preferences.getString('codeL');
     var _codeCoun = _preferences.getString('codeC');
@@ -59,6 +64,8 @@ class AppLocalizations {
   }
 
   String tr(String key, {List<String> args}) {
+    if (isTest) return key;
+
     String res = this._resolve(key, this._sentences);
     if (args != null) {
       args.forEach((String str) {
@@ -103,6 +110,7 @@ class EasylocaLizationDelegate extends LocalizationsDelegate<AppLocalizations> {
   final String path;
   final String loadPath;
   final VoidCallback onInitialized;
+  final bool isTest;
 
   ///  * use only the lang code to generate i18n file path like en.json or ar.json
   final bool useOnlyLangCode;
@@ -113,6 +121,7 @@ class EasylocaLizationDelegate extends LocalizationsDelegate<AppLocalizations> {
     this.loadPath,
     this.useOnlyLangCode = false,
     this.onInitialized,
+    this.isTest = false
   });
 
   @override
@@ -121,7 +130,7 @@ class EasylocaLizationDelegate extends LocalizationsDelegate<AppLocalizations> {
   @override
   Future<AppLocalizations> load(Locale value) async {
     final SharedPreferences _preferences =
-        await SharedPreferences.getInstance();
+    await SharedPreferences.getInstance();
     var _codeLang = _preferences.getString('codeL');
     var _codeCoun = _preferences.getString('codeC');
     if (_codeLang == null || _codeCoun == null) {
@@ -131,8 +140,15 @@ class EasylocaLizationDelegate extends LocalizationsDelegate<AppLocalizations> {
     } else
       value = Locale(_codeLang, _codeCoun);
     AppLocalizations localizations = AppLocalizations(value,
-        path: path, loadPath: loadPath, useOnlyLangCode: useOnlyLangCode);
-    _loadLocalizations(localizations);
+        path: path,
+        loadPath: loadPath,
+        useOnlyLangCode: useOnlyLangCode,
+        isTest: isTest);
+    if (isTest) {
+      localizations.loadTest(value);
+    }else {
+      _loadLocalizations(localizations);
+    }
     return localizations;
   }
 

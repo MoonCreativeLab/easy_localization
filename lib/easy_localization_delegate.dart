@@ -26,8 +26,8 @@ class AppLocalizations {
 
   Map<String, dynamic> _sentences;
 
-  Future<Localization> loadTest(Locale locale) async {
-    return Localization(locale);
+  Future<AppLocalizations> loadTest(Locale locale) async {
+    return AppLocalizations(locale);
   }
 
   Future<bool> load() async {
